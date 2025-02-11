@@ -4,7 +4,7 @@ from tkinter import Canvas, Entry, Button, PhotoImage, Listbox, Scrollbar, messa
 from controllers.recipe_controller import search_recipes, get_recipe_by_id
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/Users/arjun/FlavourFusion-GUI/build/assets/frame4")
+ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame4")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)

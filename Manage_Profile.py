@@ -26,7 +26,7 @@ def fetch_data():
         messagebox.showerror("Database Error", f"Error fetching data: {e}")
 
 OUTPUT_PATH = Path(__file__).parent
-ASSETS_PATH = OUTPUT_PATH / Path(r"/Users/arjun/FlavourFusion-GUI/build/assets/frame6")
+ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame6")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
