@@ -23,8 +23,8 @@ Ensure you have the following installed:
 ### Setup
 1. Clone the repository:
    ```sh
-   git clone https://github.com/yourusername/recipe-generator.git
-   cd recipe-generator
+   git clone https://github.com/ETCHDEV/FlavourFusion.git
+   cd FlavourFusion
    ```
 2. Set up the database:
    - Create a MySQL database.
@@ -35,7 +35,7 @@ Ensure you have the following installed:
        'host': 'your_host',
        'user': 'your_user',
        'password': 'your_password',
-       'database': 'your_database'
+       'database': 'flavourfusion'
    }
    ```
 4. Run the application:
@@ -56,11 +56,16 @@ Ensure you have the following installed:
 ```
 recipe-generator/
 │-- controllers/
+│   ├── rating_controller.py
 │   ├── recipe_controller.py
+│   ├── user_controller.py
 │-- db_helper.py
 │-- config.py
 │-- Search_Ingredients.py
 │-- Search_Category.py
+ .
+ .
+ .
 │-- assets/
 │-- README.md
 ```
