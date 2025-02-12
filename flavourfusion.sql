@@ -15,8 +15,7 @@ CREATE TABLE recipes (
     ingredients TEXT,
     instructions TEXT,
     cuisine VARCHAR(50),
-    cooking_method VARCHAR(50),
-    appliances VARCHAR(100)
+    recipe_link VARCHAR(200)
 );
 
 CREATE TABLE ratings (
