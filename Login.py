@@ -63,7 +63,8 @@ def open_login_page(previous_window):
 
     # Function to open a file (e.g., another Python script)
     def open_file(pyfile):
-        subprocess.run(["python3", pyfile])
+        window.destroy()  # First close the current window
+        subprocess.Popen(["python3", pyfile])
 
 
     # Setup tkinter window for login

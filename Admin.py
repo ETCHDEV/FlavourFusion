@@ -86,7 +86,7 @@ button_1 = Button(
     image=button_image_1,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: print("button_1 clicked"),
+    command=lambda: open_file("Manage_Recipe.py"), #Manage Recipe
     relief="flat"
 )
 button_1.place(
