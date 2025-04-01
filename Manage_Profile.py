@@ -1,29 +1,123 @@
 import tkinter as tk
 from tkinter import ttk, Canvas, Entry, Button, PhotoImage, messagebox
-import sqlite3
+import mysql.connector
 from pathlib import Path
 
-# Database function to fetch data
+
+# Database function to fetch data from MySQL
 def fetch_data():
     try:
-        with sqlite3.connect("your_database.db") as conn:
-            cursor = conn.cursor()
-            cursor.execute("PRAGMA table_info(your_table)")
-            columns = [col[1] for col in cursor.fetchall()]
+        # Establish MySQL connection
+        db = mysql.connector.connect(
+            host="localhost",  # Replace with your MySQL host
+            user="root",       # Replace with your MySQL user
+            password="12345678",  # Replace with your MySQL password
+            database="FlavourFusion"  # Replace with your MySQL database name
+        )
+        cursor = db.cursor()
 
-            tree["columns"] = columns
-            for col in columns:
-                tree.heading(col, text=col)
-                tree.column(col, width=120)
+        # Fetch the table column names
+        cursor.execute("DESCRIBE users")  # Replace "users" with your actual table name
+        columns = [col[0] for col in cursor.fetchall()]
 
-            cursor.execute("SELECT * FROM your_table")
-            rows = cursor.fetchall()
+        tree["columns"] = columns
+        for col in columns:
+            tree.heading(col, text=col)
+            tree.column(col, width=120)
 
-            tree.delete(*tree.get_children())
-            for row in rows:
-                tree.insert('', 'end', values=row)
-    except sqlite3.Error as e:
+        # Fetch all rows from the users table
+        cursor.execute("SELECT * FROM users")  # Replace "users" with your actual table name
+        rows = cursor.fetchall()
+
+        # Clear previous data in the treeview
+        tree.delete(*tree.get_children())
+
+        # Insert new data into the treeview
+        for row in rows:
+            tree.insert('', 'end', values=row)
+
+        cursor.close()
+        db.close()
+    except mysql.connector.Error as e:
         messagebox.showerror("Database Error", f"Error fetching data: {e}")
+
+# Function to update selected user's data in the database
+def update_data():
+    selected_item = tree.selection()  # Get the selected row from the Treeview
+    if not selected_item:
+        messagebox.showerror("Selection Error", "Please select a user to update.")
+        return
+
+    # Get the current data from the selected row
+    selected_data = tree.item(selected_item)["values"]
+    user_id = selected_data[0]  # Assuming the first column is the user ID
+
+    # Get the updated data from the Entry fields
+    username = entry_1.get().strip()
+    email = entry_2.get().strip()
+    password_ = entry_3.get().strip()
+    phone = entry_4.get().strip()
+
+    # Validate the input data
+    if not username or not email or not password_ or not phone:
+        messagebox.showerror("Input Error", "All fields are required!")
+        return
+
+    # Connect to the database and perform the update
+    db = mysql.connector.connect(
+        host="localhost",  # Replace with your MySQL host
+        user="root",       # Replace with your MySQL user
+        password="12345678",  # Replace with your MySQL password
+        database="FlavourFusion"  # Replace with your MySQL database name
+    )
+    cursor = db.cursor()
+
+    try:
+        cursor.execute("UPDATE users SET username = %s, email = %s, password_ = %s, phone = %s WHERE user_id = %s",
+                       (username, email, password_, phone, user_id))
+        db.commit()
+        messagebox.showinfo("Success", "User information updated successfully!")
+
+        # Refresh the table view to show the updated data
+        fetch_data()
+    except mysql.connector.Error as e:
+        messagebox.showerror("Database Error", f"Error updating data: {e}")
+    finally:
+        cursor.close()
+        db.close()
+
+# Function to delete selected user's data from the database
+def delete_data():
+    selected_item = tree.selection()  # Get the selected row from the Treeview
+    if not selected_item:
+        messagebox.showerror("Selection Error", "Please select a user to delete.")
+        return
+
+    # Get the current data from the selected row
+    selected_data = tree.item(selected_item)["values"]
+    user_id = selected_data[0]  # Assuming the first column is the user ID
+
+    # Connect to the database and perform the delete operation
+    db = mysql.connector.connect(
+        host="localhost",  # Replace with your MySQL host
+        user="root",       # Replace with your MySQL user
+        password="12345678",  # Replace with your MySQL password
+        database="FlavourFusion"  # Replace with your MySQL database name
+    )
+    cursor = db.cursor()
+
+    try:
+        cursor.execute("DELETE FROM users WHERE user_id = %s", (user_id,))
+        db.commit()
+        messagebox.showinfo("Success", "User deleted successfully!")
+
+        # Refresh the table view to reflect the changes
+        fetch_data()
+    except mysql.connector.Error as e:
+        messagebox.showerror("Database Error", f"Error deleting data: {e}")
+    finally:
+        cursor.close()
+        db.close()
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame6")
@@ -45,6 +139,7 @@ canvas = Canvas(
     relief="ridge"
 )
 canvas.place(x=0, y=0)
+
 canvas.create_text(
     42.0,
     90.0,
@@ -77,14 +172,14 @@ canvas.create_rectangle(0.0, 0.0, 1095.0, 61.0, fill="#471212", outline="")
 canvas.create_text(83.0, 7.0, anchor="nw", text="Manage Profile", fill="#FFFFFF", font=("Inika Bold", 36 * -1))
 
 button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
-button_1 = Button(image=button_image_1, borderwidth=0, highlightthickness=0, command=lambda: print("button_1 clicked"), relief="flat")
+button_1 = Button(image=button_image_1, borderwidth=0, highlightthickness=0, command=update_data, relief="flat")
 button_1.place(x=516.0, y=226.0, width=172.0, height=44.0)
 
 button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
-button_2 = Button(image=button_image_2, borderwidth=0, highlightthickness=0, command=lambda: print("button_2 clicked"), relief="flat")
+button_2 = Button(image=button_image_2, borderwidth=0, highlightthickness=0, command=delete_data, relief="flat")
 button_2.place(x=764.0, y=225.0, width=172.0, height=44.0)
 
-# Frame to hold the SQLite Table
+# Frame to hold the MySQL Table
 table_frame = tk.Frame(window)
 table_frame.place(x=25, y=355, width=1045, height=267)
 
@@ -104,6 +199,35 @@ tree.pack(fill="both", expand=True)
 refresh_button = tk.Button(window, text="Refresh Data", command=fetch_data)
 refresh_button.place(x=500, y=630)
 
+# Initial fetch to populate the table
 fetch_data()
+
+# Handle treeview item selection
+def on_treeview_select(event):
+    selected_item = tree.selection()  # Get the selected row
+    if selected_item:
+        selected_data = tree.item(selected_item)["values"]
+        entry_1.delete(0, tk.END)
+        entry_2.delete(0, tk.END)
+        entry_3.delete(0, tk.END)
+        entry_4.delete(0, tk.END)
+        
+        entry_1.insert(0, selected_data[1])  # Assuming the second column is username
+        entry_2.insert(0, selected_data[2])  # Assuming the third column is email
+        entry_3.insert(0, selected_data[3])  # Assuming the fourth column is password
+        entry_4.insert(0, selected_data[4])  # Assuming the fifth column is phone number
+
+tree.bind("<<TreeviewSelect>>", on_treeview_select)
+
 window.resizable(False, False)
 window.mainloop()
+
+
+
+
+
+
+
+
+
+

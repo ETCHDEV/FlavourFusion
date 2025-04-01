@@ -1,10 +1,10 @@
 from db_helper import execute_query, fetch_all, fetch_one
 
-def add_recipe(name, category, ingredients, instructions, cuisine, recipe_link):
+def add_recipe(name, category, ingredients, instructions, recipe_link):
     """Insert a new recipe into the database."""
-    query = """INSERT INTO recipes (name, category, ingredients, instructions, cuisine, recipe_link)
+    query = """INSERT INTO recipes (name, category, ingredients, instructions, recipe_link)
                VALUES (%s, %s, %s, %s, %s, %s)"""
-    execute_query(query, (name, category, ingredients, instructions, cuisine, recipe_link))
+    execute_query(query, (name, category, ingredients, instructions, recipe_link))
 
 def get_recipes():
     """Fetch all recipes."""

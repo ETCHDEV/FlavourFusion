@@ -10,6 +10,8 @@ from pathlib import Path
 import subprocess
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 
+from Login import open_login_page
+
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame2")
@@ -19,7 +21,8 @@ def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def open_file(pyfile):
-    subprocess.run(["python3", pyfile])
+    window.destroy()  # First close the current window
+    subprocess.Popen(["python3", pyfile])
 
 window = Tk()
 
@@ -113,57 +116,6 @@ button_1.place(
     height=42.0
 )
 
-#Search Button
-button_image_2 = PhotoImage(
-    file=relative_to_assets("button_2.png"))
-button_2 = Button(
-    image=button_image_2,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_file("Search_Ingredients.py"),
-    relief="flat"
-)
-button_2.place(
-    x=346.0,
-    y=13.0,
-    width=108.0,
-    height=39.0
-)
-
-#Category Button
-button_image_3 = PhotoImage(
-    file=relative_to_assets("button_3.png"))
-button_3 = Button(
-    image=button_image_3,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_file("Search_Category.py"),
-    relief="flat"
-)
-button_3.place(
-    x=638.0,
-    y=13.0,
-    width=108.0,
-    height=39.0
-)
-
-#Add Button
-button_image_4 = PhotoImage(
-    file=relative_to_assets("button_4.png"))
-button_4 = Button(
-    image=button_image_4,
-    borderwidth=0,
-    highlightthickness=0,
-    command=lambda: open_file("Add_Recipe2.py"),
-    relief="flat"
-)
-button_4.place(
-    x=492.0,
-    y=13.0,
-    width=108.0,
-    height=39.0
-)
-
 #Sign In Button
 button_image_5 = PhotoImage(
     file=relative_to_assets("button_5.png"))
@@ -171,7 +123,7 @@ button_5 = Button(
     image=button_image_5,
     borderwidth=0,
     highlightthickness=0,
-    command=lambda: open_file("Login.py"),
+    command=lambda: open_login_page(window),
     relief="flat"
 )
 button_5.place(
