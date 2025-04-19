@@ -3,6 +3,7 @@ import subprocess
 import mysql.connector
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog, messagebox
 from PIL import Image, ImageTk
+from config import get_db_connection
 import io
 
 OUTPUT_PATH = Path(__file__).parent
@@ -78,12 +79,7 @@ def open_uadd_page(previous_window, user_id):
         # Insert the recipe details and image into the database
         try:
             # Connect to MySQL database
-            connection = mysql.connector.connect(
-                host='localhost',
-                user='root',       # Replace with your MySQL username
-                password='12345678',   # Replace with your MySQL password
-                database='FlavourFusion'    # Replace with your database name
-            )
+            connection = get_db_connection()
 
             cursor = connection.cursor()
 

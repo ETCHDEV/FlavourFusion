@@ -5,6 +5,8 @@ from PIL import Image, ImageTk
 import mysql.connector
 import io
 
+from config import get_db_connection
+
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame13")
 
@@ -14,15 +16,6 @@ def relative_to_assets(path: str) -> Path:
 # Global variables
 uploaded_image_data = None
 selected_recipe_id = None
-
-# Database connection function
-def get_db_connection():
-    return mysql.connector.connect(
-        host='localhost',
-        user='root',
-        password='12345678',
-        database='FlavourFusion'
-    )
 
 # Function to populate the recipes table
 def populate_recipes_table():

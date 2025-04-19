@@ -5,15 +5,7 @@ from pathlib import Path
 import subprocess
 import re
 from Login import open_login_page
-
-# Function to connect to the database
-def connect_db():
-    return mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="12345678",
-        database="FlavourFusion"
-    )
+from config import get_db_connection
 
 # Function to handle user registration
 def register_user():
@@ -34,7 +26,7 @@ def register_user():
         messagebox.showerror("Invalid Password", "Password must be at least 6 characters long!")
         return
 
-    db = connect_db()
+    db = get_db_connection()
     cursor = db.cursor()
 
     try:

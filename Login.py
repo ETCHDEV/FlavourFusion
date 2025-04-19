@@ -5,6 +5,7 @@ from tkinter import messagebox
 from pathlib import Path
 
 from Home_Login import open_hlogin_page
+from config import get_db_connection
 
 # Set up asset path handling
 OUTPUT_PATH = Path(__file__).parent
@@ -15,14 +16,6 @@ def relative_to_assets(path: str) -> Path:
 
 def open_login_page(previous_window):
     previous_window.destroy()
-    
-    def connect_db():
-        return mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="12345678",
-            database="FlavourFusion"
-        )
 
     def login_user():
         email = entry_1.get().strip()
@@ -35,7 +28,7 @@ def open_login_page(previous_window):
             messagebox.showerror("Input Error", "Password is required!")
             return
 
-        db = connect_db()
+        db = get_db_connection()
         cursor = db.cursor()
 
         try:

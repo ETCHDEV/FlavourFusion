@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import messagebox
 import mysql.connector
 
+from config import get_db_connection
+
 class RatingPage:
     def __init__(self, parent, recipe_id):
         self.parent = parent
@@ -39,19 +41,6 @@ class RatingPage:
         
         # Initialize stars to empty
         self.preview_rating(0)
-
-    def get_db_connection(self):
-        """Handle database connection internally"""
-        try:
-            return mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="12345678",
-                database="FlavourFusion"
-            )
-        except mysql.connector.Error as err:
-            messagebox.showerror("Database Error", f"Failed to connect to database: {err}")
-            return None
     
     def set_rating(self, rating):
         self.rating = rating
@@ -71,7 +60,7 @@ class RatingPage:
         
         conn = None
         try:
-            conn = self.get_db_connection()
+            conn = get_db_connection()
             if conn:
                 cursor = conn.cursor()
                 

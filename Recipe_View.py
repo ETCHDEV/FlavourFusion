@@ -3,26 +3,14 @@ from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage
 import webbrowser
 import mysql.connector
 
-from Rating import RatingPage  # Added for database connection
+from Rating import RatingPage
+from config import get_db_connection  # Added for database connection
 
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame10")
 
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
-
-def create_connection():
-    try:
-        conn = mysql.connector.connect(
-            host="localhost",
-            user="root",
-            password="12345678",
-            database="FlavourFusion"
-        )
-        return conn
-    except mysql.connector.Error as e:
-        print(f"Error connecting to MySQL: {e}")
-        return None
 
 def get_rating_stars(rating):
     """Convert a rating (0-5) to star symbols"""
@@ -54,7 +42,7 @@ def open_view_page(previous_window, recipe_id, user_id):
     # Fetch recipe data and rating
     recipe_data = None
     rating = 0
-    conn = create_connection()
+    conn = get_db_connection()
     if conn is not None:
         try:
             cursor = conn.cursor()

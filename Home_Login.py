@@ -4,6 +4,7 @@ from PIL import Image, ImageTk
 import io
 import subprocess
 from tkinter import Tk, Canvas, Button, PhotoImage
+from config import get_db_connection
 
 # Import other pages
 from Add_Recipe import open_uadd_page
@@ -32,12 +33,7 @@ class AdSlideshow:
         
     def load_ads(self):
         try:
-            connection = mysql.connector.connect(
-                host="localhost",
-                user="root",
-                password="12345678",
-                database="FlavourFusion"
-            )
+            connection = get_db_connection()
             cursor = connection.cursor()
             cursor.execute("SELECT image FROM ads")
             self.ads = cursor.fetchall()

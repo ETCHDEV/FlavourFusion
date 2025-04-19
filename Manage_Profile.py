@@ -3,18 +3,14 @@ import tkinter as tk
 from tkinter import ttk, Canvas, Entry, Button, PhotoImage, messagebox
 import mysql.connector
 from pathlib import Path
+from config import get_db_connection
 
 
 # Database function to fetch data from MySQL
 def fetch_data():
     try:
         # Establish MySQL connection
-        db = mysql.connector.connect(
-            host="localhost",  # Replace with your MySQL host
-            user="root",       # Replace with your MySQL user
-            password="12345678",  # Replace with your MySQL password
-            database="FlavourFusion"  # Replace with your MySQL database name
-        )
+        db = get_db_connection()
         cursor = db.cursor()
 
         # Fetch the table column names
@@ -65,16 +61,11 @@ def update_data():
         return
 
     # Connect to the database and perform the update
-    db = mysql.connector.connect(
-        host="localhost",  # Replace with your MySQL host
-        user="root",       # Replace with your MySQL user
-        password="12345678",  # Replace with your MySQL password
-        database="FlavourFusion"  # Replace with your MySQL database name
-    )
+    db = get_db_connection()
     cursor = db.cursor()
 
     try:
-        cursor.execute("UPDATE users SET username = %s, email = %s, password_ = %s, phone = %s WHERE user_id = %s",
+        cursor.execute("UPDATE users SET username = %s, email = %s, password_hash = %s, phone = %s WHERE user_id = %s",
                        (username, email, password_, phone, user_id))
         db.commit()
         messagebox.showinfo("Success", "User information updated successfully!")
@@ -99,12 +90,7 @@ def delete_data():
     user_id = selected_data[0]  # Assuming the first column is the user ID
 
     # Connect to the database and perform the delete operation
-    db = mysql.connector.connect(
-        host="localhost",  # Replace with your MySQL host
-        user="root",       # Replace with your MySQL user
-        password="12345678",  # Replace with your MySQL password
-        database="FlavourFusion"  # Replace with your MySQL database name
-    )
+    db = get_db_connection()
     cursor = db.cursor()
 
     try:
