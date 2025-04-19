@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 from tkinter import Tk, Canvas, Entry, Text, Button, PhotoImage, filedialog, messagebox, ttk
 from PIL import Image, ImageTk
 import mysql.connector
@@ -367,6 +368,53 @@ delete_button = Button(
     font=("Arial", 12)
 )
 delete_button.place(x=635.0, y=400.0, width=170.0, height=53.0)
+
+# Create back button as a Canvas widget that acts as a button
+class CircleButton:
+    def __init__(self, canvas, x, y, radius, color, text, text_color, command):
+        self.canvas = canvas
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.command = command
+        
+        # Create circle
+        self.circle = canvas.create_oval(
+            x-radius, y-radius,
+            x+radius, y+radius,
+            fill=color, outline=""
+        )
+        
+        # Create text
+        self.text = canvas.create_text(
+            x, y,
+            text=text,
+            fill=text_color,
+            font=("Arial", 24, "bold")
+        )
+        
+        # Bind click events to both circle and text
+        canvas.tag_bind(self.circle, "<Button-1>", self.on_click)
+        canvas.tag_bind(self.text, "<Button-1>", self.on_click)
+        
+    def on_click(self, event):
+        self.command()
+
+# Create the back button
+def back_command():
+    window.destroy()
+    subprocess.Popen(["python3", "Admin.py"])
+
+back_button = CircleButton(
+    canvas=canvas,
+    x=30,
+    y=28,
+    radius=20,
+    color="brown",
+    text="←",
+    text_color="white",
+    command=back_command
+)
 
 # Create a frame for the table below the existing GUI
 table_frame = ttk.Frame(window)

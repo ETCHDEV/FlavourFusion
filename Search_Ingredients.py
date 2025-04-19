@@ -12,6 +12,11 @@ def relative_to_assets(path: str) -> Path:
 
 def open_ingredients_page(previous_window, user_id):
     previous_window.destroy()
+
+    def open_home():
+        from Home_Login import open_hlogin_page
+        open_hlogin_page(window, user_id)
+
     def perform_search():
         """Search recipes based on ingredients."""
         keyword = entry_1.get().strip()
@@ -69,6 +74,48 @@ def open_ingredients_page(previous_window, user_id):
     button_1.place(x=638.0, y=85.0, width=210.0, height=46.0)
 
     canvas.create_text(49.0, 204.0, anchor="nw", text="Recipe Results", fill="#000000", font=("Inika", 32 * -1))
+
+# Create back button as a Canvas widget that acts as a button
+    class CircleButton:
+        def __init__(self, canvas, x, y, radius, color, text, text_color, command):
+            self.canvas = canvas
+            self.x = x
+            self.y = y
+            self.radius = radius
+            self.command = command
+            
+            # Create circle
+            self.circle = canvas.create_oval(
+                x-radius, y-radius,
+                x+radius, y+radius,
+                fill=color, outline=""
+            )
+            
+            # Create text
+            self.text = canvas.create_text(
+                x, y,
+                text=text,
+                fill=text_color,
+                font=("Arial", 24, "bold")
+            )
+            
+            # Bind click events to both circle and text
+            canvas.tag_bind(self.circle, "<Button-1>", self.on_click)
+            canvas.tag_bind(self.text, "<Button-1>", self.on_click)
+            
+        def on_click(self, event):
+            self.command()
+
+    back_button = CircleButton(
+        canvas=canvas,
+        x=35,
+        y=30,
+        radius=20,
+        color="brown",
+        text="←",
+        text_color="white",
+        command=open_home
+    )
 
     # Results Listbox with Scrollbar
     frame = tk.Frame(window)

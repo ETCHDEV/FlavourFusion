@@ -10,27 +10,24 @@ from Home_Login import open_hlogin_page
 OUTPUT_PATH = Path(__file__).parent
 ASSETS_PATH = OUTPUT_PATH / Path(r"./assets/frame0")
 
-# This function helps with relative path handling for assets like images
 def relative_to_assets(path: str) -> Path:
     return ASSETS_PATH / Path(path)
 
 def open_login_page(previous_window):
     previous_window.destroy()
-    # Function to connect to the database
+    
     def connect_db():
         return mysql.connector.connect(
-            host="localhost",  # Adjust this as needed
-            user="root",       # Your database username
-            password="12345678",       # Your database password
-            database="FlavourFusion"  # Name of your database
+            host="localhost",
+            user="root",
+            password="12345678",
+            database="FlavourFusion"
         )
 
-    # Function to handle login
     def login_user():
         email = entry_1.get().strip()
         password = entry_2.get().strip()
 
-        # Check if the email and password fields are empty
         if not email:
             messagebox.showerror("Input Error", "Email is required!")
             return
@@ -38,17 +35,15 @@ def open_login_page(previous_window):
             messagebox.showerror("Input Error", "Password is required!")
             return
 
-        # Connect to the database and check if the user exists
         db = connect_db()
         cursor = db.cursor()
 
         try:
-            # Query to check if the email and password match in the database
             cursor.execute("SELECT * FROM users WHERE email = %s AND password_hash = %s", (email, password))
             user = cursor.fetchone()
             if user:
                 if user[5] == 'YES':
-                    open_file("Admin.py")  # Open the AdminPage after successful login  
+                    open_file("Admin.py")
                 else:
                     open_hlogin_page(window, user[0])         
             else:
@@ -61,18 +56,26 @@ def open_login_page(previous_window):
             cursor.close()
             db.close()
 
-    # Function to open a file (e.g., another Python script)
     def open_file(pyfile):
-        window.destroy()  # First close the current window
+        window.destroy()
         subprocess.Popen(["python3", pyfile])
 
+    def go_to_homepage():
+        window.destroy()
+        subprocess.Popen(["python3", "Homepage.py"])
 
-    # Setup tkinter window for login
+    def toggle_password():
+        if entry_2.cget('show') == '*':
+            entry_2.config(show='')
+            toggle_btn.config(fg='#555555')
+        else:
+            entry_2.config(show='*')
+            toggle_btn.config(fg='#777777')
+
     window = Tk()
     window.geometry("915x610")
     window.configure(bg="#FFFFFF")
 
-    # Create the canvas
     canvas = Canvas(
         window,
         bg="#FFFFFF",
@@ -84,11 +87,24 @@ def open_login_page(previous_window):
     )
     canvas.place(x=0, y=0)
 
-    # Background image
+    # Add back button (cross icon) in top-left corner
+    back_button = Button(
+        window,
+        text="✕",
+        command=go_to_homepage,
+        font=("Arial", 14),
+        relief="flat",
+        bg="#FFFFFF",
+        activebackground="#FFFFFF",
+        borderwidth=0,
+        fg="#000000",
+        activeforeground="#555555"
+    )
+    back_button.place(x=20, y=20, width=30, height=30)
+
     image_image_1 = PhotoImage(file=relative_to_assets("image_1.png"))
     image_1 = canvas.create_image(457.0, 305.0, image=image_image_1)
 
-    # Email label and input field
     canvas.create_text(
         493.0,
         320.0,
@@ -108,7 +124,6 @@ def open_login_page(previous_window):
     )
     entry_1.place(x=664.0, y=320.0, width=171.0, height=30.0)
 
-    # Password label and input field
     canvas.create_text(
         474.0,
         386.0,
@@ -125,17 +140,39 @@ def open_login_page(previous_window):
         bg="#B4AFAF",
         fg="#000716",
         highlightthickness=0,
-        show="*"  # Mask the password input
+        show="*"
     )
     entry_2.place(x=664.0, y=393.0, width=171.0, height=33.0)
 
-    # Sign In button
+    # Transparent gray toggle button
+    toggle_btn = Button(
+        window,
+        text="👁",
+        command=toggle_password,
+        font=("Arial", 10),
+        relief="flat",
+        bg="#B4AFAF",
+        activebackground="#B4AFAF",
+        borderwidth=0,
+        padx=0,
+        pady=0,
+        fg="#777777",
+        activeforeground="#555555",
+        highlightthickness=0
+    )
+    toggle_btn.place(x=810.0, y=395.0, width=25.0, height=25.0)
+
+    toggle_btn.config(
+        highlightbackground="#B4AFAF",
+        highlightcolor="#B4AFAF"
+    )
+
     button_image_1 = PhotoImage(file=relative_to_assets("button_1.png"))
     button_1 = Button(
         image=button_image_1,
         borderwidth=0,
         highlightthickness=0,
-        command=login_user,  # Call login_user() when the button is clicked
+        command=login_user,
         relief="flat"
     )
     button_1.place(x=684.0, y=469.0, width=131.0, height=44.0)
@@ -149,10 +186,5 @@ def open_login_page(previous_window):
         font=("Inika Bold", 40 * -1)
     )
 
-    # Disable resizing
     window.resizable(False, False)
-
-    # Run the main loop
     window.mainloop()
-
-

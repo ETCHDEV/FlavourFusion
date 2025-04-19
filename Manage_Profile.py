@@ -1,3 +1,4 @@
+import subprocess
 import tkinter as tk
 from tkinter import ttk, Canvas, Entry, Button, PhotoImage, messagebox
 import mysql.connector
@@ -178,6 +179,53 @@ button_1.place(x=516.0, y=226.0, width=172.0, height=44.0)
 button_image_2 = PhotoImage(file=relative_to_assets("button_2.png"))
 button_2 = Button(image=button_image_2, borderwidth=0, highlightthickness=0, command=delete_data, relief="flat")
 button_2.place(x=764.0, y=225.0, width=172.0, height=44.0)
+
+# Create back button as a Canvas widget that acts as a button
+class CircleButton:
+    def __init__(self, canvas, x, y, radius, color, text, text_color, command):
+        self.canvas = canvas
+        self.x = x
+        self.y = y
+        self.radius = radius
+        self.command = command
+        
+        # Create circle
+        self.circle = canvas.create_oval(
+            x-radius, y-radius,
+            x+radius, y+radius,
+            fill=color, outline=""
+        )
+        
+        # Create text
+        self.text = canvas.create_text(
+            x, y,
+            text=text,
+            fill=text_color,
+            font=("Arial", 24, "bold")
+        )
+        
+        # Bind click events to both circle and text
+        canvas.tag_bind(self.circle, "<Button-1>", self.on_click)
+        canvas.tag_bind(self.text, "<Button-1>", self.on_click)
+        
+    def on_click(self, event):
+        self.command()
+
+# Create the back button
+def back_command():
+    window.destroy()
+    subprocess.Popen(["python3", "Admin.py"])
+
+back_button = CircleButton(
+    canvas=canvas,
+    x=30,
+    y=28,
+    radius=20,
+    color="brown",
+    text="←",
+    text_color="white",
+    command=back_command
+)
 
 # Frame to hold the MySQL Table
 table_frame = tk.Frame(window)
